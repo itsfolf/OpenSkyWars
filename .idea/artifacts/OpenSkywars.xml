@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="OpenSkywars">
+    <output-path>$USER_HOME$/Desktop/Server/plugins/</output-path>
+    <root id="archive" name="OpenSkywars.jar">
+      <element id="module-output" name="OpenSkyWars" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/plugin.yml" />
+    </root>
+  </artifact>
+</component>
