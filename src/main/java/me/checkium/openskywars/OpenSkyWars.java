@@ -14,6 +14,7 @@ public class OpenSkyWars extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        ArenaManager.get().loadArenas();
     }
 
     @Override
