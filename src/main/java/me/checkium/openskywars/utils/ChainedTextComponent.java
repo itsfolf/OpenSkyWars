@@ -5,6 +5,9 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Achievement;
+import org.bukkit.Bukkit;
+
 /**
  * Class to easily create text components
  * using chained methods.
@@ -46,6 +49,7 @@ public class ChainedTextComponent {
 
     public ChainedTextComponent suggestOnClick(String cmd) {
         comp.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, cmd));
+        comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new ChainedTextComponent("Click to edit").color(ChatColor.GREEN).get()}));
         return this;
     }
 

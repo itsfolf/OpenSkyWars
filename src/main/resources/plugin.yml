@@ -2,3 +2,5 @@ name: OpenSkyWars
 author: Checkium
 version: 1.0
 main: me.checkium.openskywars.OpenSkyWars
+commands:
+  osw:

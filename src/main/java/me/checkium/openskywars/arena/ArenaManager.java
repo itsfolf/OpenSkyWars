@@ -58,4 +58,8 @@ public class ArenaManager {
         logger.info(ChatColor.GREEN + "Loaded " + num + " arenas in " + (System.currentTimeMillis() - start) + "ms (" + invalid + " invalid).");
     }
 
+    public Arena forName(String name) {
+        return loadedArenas.stream().filter(arena -> arena.name.equals(name)).findFirst().orElse(null);
+    }
+
 }

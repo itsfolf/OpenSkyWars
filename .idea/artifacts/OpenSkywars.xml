@@ -4,6 +4,7 @@
     <root id="archive" name="OpenSkywars.jar">
       <element id="module-output" name="OpenSkyWars" />
       <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/plugin.yml" />
+      <element id="module-output" name="OpenSkyWars_main" />
     </root>
   </artifact>
 </component>

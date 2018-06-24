@@ -98,7 +98,7 @@ public class GuiAction implements Listener {
 
     private void register() throws IOException {
         String pluginName = null;
-        InputStream in = getClass().getResourceAsStream("/file.txt");
+        InputStream in = getClass().getResourceAsStream("/plugin.yml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String line;
         while ((line = reader.readLine()) != null) {
