@@ -2,7 +2,8 @@ package me.checkium.openskywars.commands;
 
 import me.checkium.openskywars.arena.Arena;
 import me.checkium.openskywars.arena.ArenaManager;
-import net.minecraft.server.v1_8_R3.Enchantment;
+import me.checkium.openskywars.arena.setup.BorderSetup;
+import me.checkium.openskywars.arena.setup.SpawnSetup;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,15 +30,15 @@ public class ArenaCommand {
                 return;
             }
             if (args.length > 3 && arena != null) {
-                switch (args[2]) {
+                switch (args[2].toLowerCase()) {
                     case "enabled":
+                    case "enable":
                         if (arena.enabled && args[3].equals("false")) {
                             arena.enabled = false;
                             sender.sendMessage(ChatColor.GREEN + "The arena " + ChatColor.BLUE + arenaName + ChatColor.GREEN + " is now " + ChatColor.RED + "disabled" + ChatColor.GREEN + "!");
                             return;
                         } else if (!arena.enabled && args[3].equals("true")) {
-                            arena.enabled = true;
-                            sender.sendMessage(ChatColor.GREEN + "The arena " + ChatColor.BLUE + arenaName + ChatColor.GREEN + " is now enabled" + ChatColor.GREEN + "!");
+                            sender.sendMessage(arena.enable());
                         } else {
                             sender.sendMessage(ChatColor.GREEN + "The arena " + ChatColor.BLUE + arenaName + ChatColor.GREEN + " is already " + (arena.enabled ? "enabled" : ChatColor.RED + "disabled") + "!");
                         }
@@ -88,6 +89,10 @@ public class ArenaCommand {
                                         sender.sendMessage(ChatColor.GREEN + "Remove the refill time " + ChatColor.BLUE + number + ChatColor.GREEN + " from the arena " + ChatColor.BLUE + arenaName);
                                     }
                                     break;
+                                case "clear":
+                                    arena.refillTimes.clear();
+                                    sender.sendMessage(ChatColor.GREEN + "Cleared all the refill times from the arena " + ChatColor.BLUE + arenaName);
+                                    break;
                                 default:
                                     sender.sendMessage(ChatColor.RED + "Invalid usage, please use " + ChatColor.BLUE + "/osw arena " + arenaName + " refilltimes <add/remove> <number>");
                                     break;
@@ -96,11 +101,26 @@ public class ArenaCommand {
                             sender.sendMessage(ChatColor.RED + "Invalid usage, please use " + ChatColor.BLUE + "/osw arena " + arenaName + " refilltimes <add/remove> <number>");
                         }
                         break;
+                }
+            } else if (args.length > 2 && arena != null) {
+                switch(args[2].toLowerCase()) {
                     case "spawnsetup":
+                        if (SpawnSetup.setups.stream().filter(spawnSetup -> spawnSetup.player.equals(sender)).count() > 0) {
+                            sender.sendMessage(ChatColor.RED + "You are already on setup mode.");
+                        } else {
+                            SpawnSetup s = new SpawnSetup(arena, (Player) sender);
+                            s.init();
+                        }
                         break;
                     case "chestsetup":
                         break;
                     case "bordersetup":
+                        if (BorderSetup.setups.stream().filter(spawnSetup -> spawnSetup.player.equals(sender)).count() > 0) {
+                            sender.sendMessage(ChatColor.RED + "You are already on setup mode.");
+                        } else {
+                            BorderSetup s = new BorderSetup(arena, (Player) sender);
+                            s.init();
+                        }
                         break;
                 }
             } else {
@@ -118,6 +138,10 @@ public class ArenaCommand {
             sender.sendMessage(ChatColor.GREEN + "Arena list (enabled/" + ChatColor.RED + "disabled" + ChatColor.GREEN + "): " +
             ArenaManager.get().loadedArenas.stream().map(arena -> arena.enabled ? ChatColor.GREEN + arena.name : ChatColor.RED + arena.name).collect(Collectors.joining(", ")));
         }
+    }
+
+    boolean isInSetup(Player p) {
+        return (SpawnSetup.setups.stream().filter(spawnSetup -> spawnSetup.player.equals(p)).count() > 0);
     }
 
     public boolean isInt(CommandSender s, String arg) {

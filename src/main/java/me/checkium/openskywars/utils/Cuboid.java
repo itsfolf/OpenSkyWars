@@ -4,9 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 public class Cuboid {
@@ -45,6 +46,53 @@ public class Cuboid {
 
     public int getSize() {
         return (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1);
+    }
+
+    public List<Location> getBorders() {
+        List<Location> locs = new ArrayList<>();
+        int minX = Math.min(x1, x2);
+        int maxX = Math.max(x1, x2);
+        int minY = Math.min(y1, y2);
+        int maxY = Math.max(y1, y2);
+        int minZ = Math.min(z1, z2);
+        int maxZ = Math.max(z1, z2);
+        for (int i = minX; i < maxX; i++) {
+            locs.add(new Location(Bukkit.getWorld(worldName), i, minY, minZ));
+            locs.add(new Location(Bukkit.getWorld(worldName), i, minY, maxZ));
+            locs.add(new Location(Bukkit.getWorld(worldName), i, maxY, minZ));
+            locs.add(new Location(Bukkit.getWorld(worldName), i, maxY, maxZ));
+        }
+        for (int i = minZ; i < maxZ; i++) {
+            locs.add(new Location(Bukkit.getWorld(worldName), minX, minY, i));
+            locs.add(new Location(Bukkit.getWorld(worldName), maxX, minY, i));
+            locs.add(new Location(Bukkit.getWorld(worldName), minX, maxY, i));
+            locs.add(new Location(Bukkit.getWorld(worldName), maxX, maxY, i));
+        }
+        for (int i = minY; i < maxY; i++) {
+            locs.add(new Location(Bukkit.getWorld(worldName), minX, i, minZ));
+            locs.add(new Location(Bukkit.getWorld(worldName), maxX, i, maxZ));
+            locs.add(new Location(Bukkit.getWorld(worldName), minX, i, maxZ));
+            locs.add(new Location(Bukkit.getWorld(worldName), maxX, i, minZ));
+        }
+        return locs;
+    }
+
+    public List<Location> getAll() {
+        List<Location> locs = new ArrayList<>();
+        int minX = Math.min(x1, x2);
+        int maxX = Math.max(x1, x2);
+        int minY = Math.min(y1, y2);
+        int maxY = Math.max(y1, y2);
+        int minZ = Math.min(z1, z2);
+        int maxZ = Math.max(z1, z2);
+        for (int i = minX; i < maxX; i++) {
+            for (int j = minZ; j < maxZ; j++) {
+                for (int k = minY; k < maxY; k++) {
+                    locs.add(new Location(Bukkit.getWorld(worldName), i, k, j));
+                }
+            }
+        }
+        return locs;
     }
 
     public Location getRandomLocation() {

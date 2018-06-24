@@ -1,5 +1,6 @@
 package me.checkium.openskywars.utils;
 
+import me.checkium.openskywars.OpenSkyWars;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,12 +9,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * Easily create menu GUIs with up to 5 options
  * with runnables.
@@ -37,7 +35,8 @@ public class GuiAction implements Listener {
         build(p);
     }
 
-    public GuiAction() { }
+    public GuiAction() {
+    }
 
     public GuiAction add(ItemStack option, Runnable runnable) {
         options.add(option);
@@ -63,11 +62,7 @@ public class GuiAction implements Listener {
             inv.setItem(17 + i, options.get(n));
             n++;
         }
-        try {
-            register();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        register();
         p.openInventory(inv);
     }
 
@@ -96,33 +91,22 @@ public class GuiAction implements Listener {
     }
 
 
-    private void register() throws IOException {
-        String pluginName = null;
-        InputStream in = getClass().getResourceAsStream("/plugin.yml");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (line.startsWith("name: ")) {
-                pluginName = line.split(": ")[1];
-            }
-        }
-        if (pluginName != null) {
-            Bukkit.getServer().getPluginManager().registerEvents(this, Bukkit.getServer().getPluginManager().getPlugin(pluginName));
-        }
+    private void register() {
+        Bukkit.getServer().getPluginManager().registerEvents(this, OpenSkyWars.getInstance());
     }
 
     @EventHandler
     public void inventoryClick(InventoryClickEvent e) {
-       if (e.getWhoClicked().getUniqueId().equals(p.getUniqueId())) {
-           if (e.getInventory().getName().equals(inv.getName())) {
-               if (e.getCurrentItem() != null) {
-                   if (options.contains(e.getCurrentItem())) {
-                       runnables.get(options.indexOf(e.getCurrentItem())).run();
-                   }
-               }
-               e.setCancelled(true);
-           }
-       }
+        if (e.getWhoClicked().getUniqueId().equals(p.getUniqueId())) {
+            if (e.getInventory().getName().equals(inv.getName())) {
+                if (e.getCurrentItem() != null) {
+                    if (options.contains(e.getCurrentItem())) {
+                        runnables.get(options.indexOf(e.getCurrentItem())).run();
+                    }
+                }
+                e.setCancelled(true);
+            }
+        }
     }
 
 

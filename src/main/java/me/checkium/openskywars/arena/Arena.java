@@ -83,23 +83,28 @@ public class Arena {
                 .add(new ChainedTextComponent("\nMax teams - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(maxTeams)).suggestOnClick(command() + " maxteams <number>"))
                 .add(new ChainedTextComponent("\nLobby countdown - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(lobbyCountdown)).suggestOnClick(command() + " lobbycountdown <number>"))
                 .add(new ChainedTextComponent("\nGame length - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(gameLength)).suggestOnClick(command() + " gameLength <number>"))
-                .add(new ChainedTextComponent("\nRefill times - ").color(ChatColor.GREEN).add(new ChainedTextComponent(getElement(refillTimes)).suggestOnClick(command() + " refilltiems <add/remove> <number>")))
+                .add(new ChainedTextComponent("\nRefill times - ").color(ChatColor.GREEN).add(new ChainedTextComponent(getElement(refillTimes)).suggestOnClick(command() + " refilltimes <add/remove> <number>")))
                 .add(new ChainedTextComponent("\nTeams - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(teams)).suggestOnClick(command() + " spawnsetup"))
                 .add(new ChainedTextComponent("\nChests - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(chests)).suggestOnClick(command() + " chestsetup"))
-                .add(new ChainedTextComponent("\nSize - ").color(ChatColor.GREEN)).add(new ChainedTextComponent("" + cuboid.getSize()).color(ChatColor.BLUE).suggestOnClick(command() + " bordersetuo"))
+                .add(new ChainedTextComponent("\nSize - ").color(ChatColor.GREEN)).add(new ChainedTextComponent("" + cuboid.getSize()).color(cuboid.getSize() > 1 ? ChatColor.BLUE : ChatColor.RED).suggestOnClick(command() + " bordersetup"))
                 .add(new ChainedTextComponent("\n=============================").color(ChatColor.GREEN)).get();
     }
 
     public String getElement(Object element) {
         if (element != null) {
             if (element instanceof List) {
-                return ChatColor.BLUE + "" + ((List) element).stream().map(o -> o.toString()).collect(Collectors.joining(", "));
+                String r = ChatColor.BLUE + "" + ((List) element).stream().map(o -> o.toString()).collect(Collectors.joining(", "));
+                return r.length() < 3 ? ChatColor.RED + "None." : r;
             } else if (element instanceof HashMap) {
                 if (((HashMap) element).keySet().stream().anyMatch(o -> o instanceof String)) {
                     return ChatColor.BLUE + "" + ((HashMap) element).keySet().stream().collect(Collectors.joining(ChatColor.BLUE + ", "));
                 } else {
-                    return ChatColor.BLUE + "" + ((HashMap) element).size() + " set.";
+                    return (((HashMap) element).size() > 0 ? ChatColor.BLUE : ChatColor.RED) + "" + ((HashMap) element).size() + " set.";
                 }
+            } else if (element instanceof  Integer) {
+                return (Integer) element > 0 ? ChatColor.BLUE + "" + element : ChatColor.RED + "" + element;
+            } else if (element instanceof Boolean) {
+                return (Boolean) element ? ChatColor.BLUE + "" + element : ChatColor.RED + "" + element;
             } else {
                 return ChatColor.BLUE + element.toString();
             }
@@ -127,7 +132,7 @@ public class Arena {
         } else if (teams.size() != maxTeams) {
             response += "The amount of teams needs to be the same as the max teams";
         } else {
-            response = ChatColor.GREEN + "Successfully created arena " + ChatColor.BLUE + name;
+            response = ChatColor.GREEN + "The arena " + ChatColor.BLUE + name + ChatColor.GREEN + " is now enabled" + ChatColor.GREEN + "!";
         }
         return response;
     }
