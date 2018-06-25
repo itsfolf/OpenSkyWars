@@ -18,7 +18,7 @@ public class OpenSkyWars extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+          ArenaManager.get().saveArenas();
     }
 
     public static OpenSkyWars getInstance() {

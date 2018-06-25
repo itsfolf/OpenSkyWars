@@ -8,6 +8,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.GregorianCalendar;
 import java.util.stream.Collectors;
 
 public class ArenaCommand {
@@ -23,9 +25,9 @@ public class ArenaCommand {
                 if (arena == null) {
                     Arena newA = new Arena(arenaName);
                     ArenaManager.get().loadedArenas.add(newA);
-                    sender.sendMessage(ChatColor.GREEN + "Created arena " + ChatColor.BLUE + arenaName + ChatColor.GREEN + "! Edit it with " + ChatColor.BLUE + "/osw arena " + arenaName + " edit");
+                    sender.sendMessage(ChatColor.GREEN + "Created arena " + ChatColor.BLUE + arenaName + ChatColor.GREEN + "! Edit it with " + ChatColor.BLUE + "/osw arena " + arenaName);
                 } else {
-                    sender.sendMessage(ChatColor.RED + "There's already an arena called " + ChatColor.BLUE + arenaName + ChatColor.RED + ", edit it with " + ChatColor.BLUE + "/osw arena " + arenaName + " edit");
+                    sender.sendMessage(ChatColor.RED + "There's already an arena called " + ChatColor.BLUE + arenaName + ChatColor.RED + ", edit it with " + ChatColor.BLUE + "/osw arena " + arenaName);
                 }
                 return;
             }
@@ -101,6 +103,12 @@ public class ArenaCommand {
                             sender.sendMessage(ChatColor.RED + "Invalid usage, please use " + ChatColor.BLUE + "/osw arena " + arenaName + " refilltimes <add/remove> <number>");
                         }
                         break;
+                    case "name":
+                        String[] namea = Arrays.copyOfRange(args, 3, args.length - 1);
+                        String name = Arrays.stream(namea).collect(Collectors.joining(" "));
+                        arena.prettyName = name;
+                        sender.sendMessage(ChatColor.GREEN + "Set " + ChatColor.BLUE + arenaName + ChatColor.GREEN + "'s name to " + name);
+                        break;
                 }
             } else if (args.length > 2 && arena != null) {
                 switch(args[2].toLowerCase()) {
@@ -121,6 +129,12 @@ public class ArenaCommand {
                             BorderSetup s = new BorderSetup(arena, (Player) sender);
                             s.init();
                         }
+                        break;
+                    case "save":
+                        long a = System.currentTimeMillis();
+                        ArenaManager.get().saveArena(arena);
+                        long num = System.currentTimeMillis() - a;
+                        sender.sendMessage(ChatColor.GREEN + "Saved arena " + ChatColor.BLUE + arenaName + ChatColor.GREEN + " in " + ChatColor.BLUE + num + ChatColor.GREEN + "ms.");
                         break;
                 }
             } else {

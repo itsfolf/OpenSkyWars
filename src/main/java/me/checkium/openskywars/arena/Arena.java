@@ -1,14 +1,13 @@
 package me.checkium.openskywars.arena;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import me.checkium.openskywars.utils.ChainedTextComponent;
 import me.checkium.openskywars.utils.Cuboid;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.json.simple.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +18,7 @@ import static me.checkium.openskywars.utils.Utils.*;
 
 public class Arena {
     public String name;
+    public String prettyName;
     public  boolean enabled;
     public  int teamSize, minTeams, maxTeams;
     public int lobbyCountdown, gameLength;
@@ -29,10 +29,12 @@ public class Arena {
 
     public Arena(String name) {
         this.name = name;
+        this.prettyName = name;
     }
 
     public Arena(JsonObject data) {
         this.name = data.get("name").getAsString();
+        this.prettyName = data.get("prettyName").getAsString();
         this.enabled = data.get("enabled").getAsBoolean();
         this.teamSize = data.get("teamSize").getAsInt();
         this.minTeams = data.get("minTeams").getAsInt();
@@ -52,31 +54,37 @@ public class Arena {
     public JsonObject serialize() {
         JsonObject object = new JsonObject();
         object.addProperty("name", name);
+        object.addProperty("prettyName", prettyName);
         object.addProperty("enabled", enabled);
         object.addProperty("teamSize", teamSize);
         object.addProperty("minTeams", minTeams);
         object.addProperty("maxTeams", maxTeams);
         object.addProperty("lobbyCountdown", lobbyCountdown);
         object.addProperty("gameLength", gameLength);
-        object.addProperty("refillTimes", new Gson().toJson(refillTimes));
-        JsonObject teamsObject = new JsonObject();
+        object.add("refillTimes", new GsonBuilder().create().toJsonTree(refillTimes));
+        JsonArray teamsArray = new JsonArray();
         teams.forEach((s, location) -> {
+            JsonObject teamsObject = new JsonObject();
             teamsObject.addProperty("name", s);
             teamsObject.addProperty("spawnpoint", locationToString(location));
+            teamsArray.add(teamsObject);
         });
-        object.add("teams", teamsObject);
-        JsonObject chestsObject = new JsonObject();
+        object.add("teams", teamsArray);
+        JsonArray chestsArray = new JsonArray();
         chests.forEach((location, s) -> {
+            JsonObject chestsObject = new JsonObject();
             chestsObject.addProperty("location", locationToString(location));
             chestsObject.addProperty("type", s);
+            chestsArray.add(chestsObject);
         });
-        object.add("chests", chestsObject);
+        object.add("chests", chestsArray);
         object.addProperty("cuboid", cuboid.toString());
         return object;
     }
 
     public TextComponent getComponent() {
         return new ChainedTextComponent("==========Arena ").color(ChatColor.GREEN).add(new ChainedTextComponent(name).color(ChatColor.BLUE)).add(new ChainedTextComponent("==========").color(ChatColor.GREEN))
+                .add(new ChainedTextComponent("\nPretty name - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(prettyName).suggestOnClick(command() + " name <name>"))
                 .add(new ChainedTextComponent("\nEnabled - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(enabled)).suggestOnClick(command() + " enabled <true/false>"))
                 .add(new ChainedTextComponent("\nTeam size - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(teamSize)).suggestOnClick(command() + " teamsize <number>"))
                 .add(new ChainedTextComponent("\nMin teams - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(minTeams)).suggestOnClick(command() + " minteams <number>"))
@@ -87,7 +95,7 @@ public class Arena {
                 .add(new ChainedTextComponent("\nTeams - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(teams)).suggestOnClick(command() + " spawnsetup"))
                 .add(new ChainedTextComponent("\nChests - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(chests)).suggestOnClick(command() + " chestsetup"))
                 .add(new ChainedTextComponent("\nSize - ").color(ChatColor.GREEN)).add(new ChainedTextComponent("" + cuboid.getSize()).color(cuboid.getSize() > 1 ? ChatColor.BLUE : ChatColor.RED).suggestOnClick(command() + " bordersetup"))
-                .add(new ChainedTextComponent("\n=============================").color(ChatColor.GREEN)).get();
+                .add(new ChainedTextComponent("\n============").color(ChatColor.GREEN).add(new ChainedTextComponent("Save").suggestOnClick(command() + " save").color(ChatColor.GREEN).bold().add(new ChainedTextComponent("=============").color(ChatColor.GREEN)))).get();
     }
 
     public String getElement(Object element) {

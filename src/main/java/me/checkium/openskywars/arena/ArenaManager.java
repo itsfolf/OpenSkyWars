@@ -5,13 +5,16 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import me.checkium.openskywars.OpenSkyWars;
 import me.checkium.openskywars.utils.Logger;
+import org.apache.commons.lang.CharSet;
 import org.bukkit.ChatColor;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +59,29 @@ public class ArenaManager {
             }
         }
         logger.info(ChatColor.GREEN + "Loaded " + num + " arenas in " + (System.currentTimeMillis() - start) + "ms (" + invalid + " invalid).");
+    }
+
+    public void saveArena(Arena a) {
+        try {
+            File arenaFolder = new File(OpenSkyWars.getInstance().getDataFolder() + "/arenas");
+            if (!arenaFolder.exists()) arenaFolder.mkdirs();
+            File arenaFile = new File(arenaFolder, a.name);
+            if (!arenaFile.exists()) arenaFile.createNewFile();
+            Files.write(Paths.get(arenaFile.getPath()), a.serialize().toString().getBytes());
+        } catch (IOException e) {
+           logger.error("Failed to save arena " + a.name + ":\n" + e.getMessage());
+        }
+    }
+
+    public void saveArenas() {
+        long start = System.currentTimeMillis();
+        final int[] num = {0};
+        logger.info(ChatColor.GREEN + "Saving arenas...");
+        loadedArenas.forEach(arena -> {
+            saveArena(arena);
+            num[0]++;
+        });
+        logger.info(ChatColor.GREEN + "Saved " + num[0] + " arenas in " + (System.currentTimeMillis() - start) + "ms.");
     }
 
     public Arena forName(String name) {
