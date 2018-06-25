@@ -10,11 +10,11 @@ public class Logger {
     private Logger(String name) {
         this.name = name;
     }
-    
+
     public static Logger getLogger(String name) {
         return new Logger(name);
     }
-    
+
     public void info(String message) {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[OpenSkyWars-" + name + "] " + message);
     }

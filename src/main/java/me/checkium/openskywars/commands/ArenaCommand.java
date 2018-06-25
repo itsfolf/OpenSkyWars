@@ -76,7 +76,7 @@ class ArenaCommand {
                             switch (args[3]) {
                                 case "add":
                                     if (arena.refillTimes.contains(number)) {
-                                        sender.sendMessage(ChatColor.RED + "The arena " + ChatColor.BLUE + arenaName + ChatColor.RED + " already has the refill time " + ChatColor.BLUE  + number);
+                                        sender.sendMessage(ChatColor.RED + "The arena " + ChatColor.BLUE + arenaName + ChatColor.RED + " already has the refill time " + ChatColor.BLUE + number);
                                     } else {
                                         arena.refillTimes.add(number);
                                         sender.sendMessage(ChatColor.GREEN + "Added the refill time " + ChatColor.BLUE + number + ChatColor.GREEN + " to the arena " + ChatColor.BLUE + arenaName);
@@ -84,7 +84,7 @@ class ArenaCommand {
                                     break;
                                 case "remove":
                                     if (!arena.refillTimes.contains(number)) {
-                                        sender.sendMessage(ChatColor.RED + "The arena " + ChatColor.BLUE + arenaName + ChatColor.RED + " has no refill time " + ChatColor.BLUE  + number);
+                                        sender.sendMessage(ChatColor.RED + "The arena " + ChatColor.BLUE + arenaName + ChatColor.RED + " has no refill time " + ChatColor.BLUE + number);
                                     } else {
                                         arena.refillTimes.remove(Integer.valueOf(number));
                                         sender.sendMessage(ChatColor.GREEN + "Remove the refill time " + ChatColor.BLUE + number + ChatColor.GREEN + " from the arena " + ChatColor.BLUE + arenaName);
@@ -110,7 +110,7 @@ class ArenaCommand {
                         break;
                 }
             } else if (args.length > 2 && arena != null) {
-                switch(args[2].toLowerCase()) {
+                switch (args[2].toLowerCase()) {
                     case "spawnsetup":
                         if (SpawnSetup.setups.stream().anyMatch(spawnSetup -> spawnSetup.player.equals(sender))) {
                             sender.sendMessage(ChatColor.RED + "You are already on setup mode.");
@@ -149,7 +149,7 @@ class ArenaCommand {
             }
         } else {
             sender.sendMessage(ChatColor.GREEN + "Arena list (enabled/" + ChatColor.RED + "disabled" + ChatColor.GREEN + "): " +
-            ArenaManager.get().loadedArenas.stream().map(arena -> arena.enabled ? ChatColor.GREEN + arena.name : ChatColor.RED + arena.name).collect(Collectors.joining(", ")));
+                    ArenaManager.get().loadedArenas.stream().map(arena -> arena.enabled ? ChatColor.GREEN + arena.name : ChatColor.RED + arena.name).collect(Collectors.joining(", ")));
         }
     }
 

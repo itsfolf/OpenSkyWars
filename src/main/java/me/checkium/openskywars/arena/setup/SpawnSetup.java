@@ -24,17 +24,19 @@ import java.util.List;
 
 public class SpawnSetup implements Listener {
     public static List<SpawnSetup> setups = new ArrayList<>();
-
-    private Arena arena;
     public Player player;
+    private Arena arena;
     private ItemStack[] contents;
     private ItemStack[] armorContents;
+    private BukkitTask task;
+    private Location current;
+
     public SpawnSetup(Arena a, Player p) {
         this.player = p;
         this.arena = a;
         setups.add(this);
     }
-    private BukkitTask task;
+
     public void init() {
         contents = player.getInventory().getContents().clone();
         armorContents = player.getInventory().getArmorContents().clone();
@@ -42,14 +44,14 @@ public class SpawnSetup implements Listener {
         player.getInventory().setItem(4, ItemUtils.named(Material.BEACON, 1, ChatColor.GREEN + "Spawn Setter"));
         player.getInventory().setItem(8, ItemUtils.named(Material.REDSTONE, 1, ChatColor.GREEN + "Exit"));
         Bukkit.getServer().getPluginManager().registerEvents(this, OpenSkyWars.getInstance());
-         task = Bukkit.getScheduler().runTaskTimer(OpenSkyWars.getInstance(), () -> {
+        task = Bukkit.getScheduler().runTaskTimer(OpenSkyWars.getInstance(), () -> {
             int amount = 20;
 
             double increment = (2 * Math.PI) / amount;
             double radius = 0.5;
             arena.teams.forEach((s, location) -> {
-                Location center = location.getBlock().getLocation().clone().add(0.5,0,0.5);
-                for(int i = 0; i < 20; i++) {
+                Location center = location.getBlock().getLocation().clone().add(0.5, 0, 0.5);
+                for (int i = 0; i < 20; i++) {
                     double angle = i * increment;
                     double x = center.getX() + (radius * Math.cos(angle));
                     double z = center.getZ() + (radius * Math.sin(angle));
@@ -77,7 +79,7 @@ public class SpawnSetup implements Listener {
         if (e.getPlayer().equals(player)) {
             if (e.getBlockPlaced().getType().equals(Material.BEACON)) {
                 if (e.getItemInHand().getItemMeta().getDisplayName().contains("Spawn Setter")) {
-                  if (!setSpawn(e.getBlockPlaced().getLocation())) e.setCancelled(true);
+                    if (!setSpawn(e.getBlockPlaced().getLocation())) e.setCancelled(true);
                 }
             }
         }
@@ -87,7 +89,7 @@ public class SpawnSetup implements Listener {
     public void breakk(BlockBreakEvent e) {
         if (e.getPlayer().equals(player)) {
             if (e.getBlock().getType().equals(Material.BEACON)) {
-               removeSpawn(e.getBlock().getLocation());
+                removeSpawn(e.getBlock().getLocation());
             }
         }
     }
@@ -98,7 +100,7 @@ public class SpawnSetup implements Listener {
             return false;
         }
         if (!arena.teams.containsKey(team)) {
-            arena.teams.put(team, l.clone().add(0,1,0));
+            arena.teams.put(team, l.clone().add(0, 1, 0));
             player.sendMessage(ChatColor.GREEN + "Set spawn for the team " + TeamsConfig.getTeams().get(team));
         } else {
             player.sendMessage(ChatColor.RED + "There's already a spawn for the team " + TeamsConfig.getTeams().get(team));
@@ -107,8 +109,8 @@ public class SpawnSetup implements Listener {
     }
 
     private boolean setSpawn(Location l) {
-        String a =  getFreeTeam();
-        if (a!= null) {
+        String a = getFreeTeam();
+        if (a != null) {
             return setSpawn(l, a);
         } else {
             player.sendMessage(ChatColor.RED + "There are no more teams available, you can add more on teams.yml");
@@ -119,7 +121,7 @@ public class SpawnSetup implements Listener {
     private void removeSpawn(Location l) {
         List<String> torem = new ArrayList<>();
         arena.teams.forEach((s, location) -> {
-            if (l.clone().add(0,1,0).equals(location)) {
+            if (l.clone().add(0, 1, 0).equals(location)) {
                 torem.add(s);
             }
         });
@@ -138,7 +140,6 @@ public class SpawnSetup implements Listener {
         return null;
     }
 
-    private Location current;
     @EventHandler
     public void interact(PlayerInteractEvent e) {
         if (e.getPlayer().equals(player)) {
@@ -153,7 +154,7 @@ public class SpawnSetup implements Listener {
             } else if (e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                 if (e.getPlayer().getItemInHand().getType().equals(Material.REDSTONE)) {
                     if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains("Exit")) {
-                         exit();
+                        exit();
                     }
                 }
             }

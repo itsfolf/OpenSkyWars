@@ -1,6 +1,9 @@
 package me.checkium.openskywars.arena;
 
-import com.google.gson.*;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import me.checkium.openskywars.utils.ChainedTextComponent;
 import me.checkium.openskywars.utils.Cuboid;
 import net.md_5.bungee.api.ChatColor;
@@ -18,12 +21,12 @@ import static me.checkium.openskywars.utils.Utils.*;
 public class Arena {
     public String name;
     public String prettyName;
-    public  boolean enabled;
-    public  int teamSize, minTeams, maxTeams;
+    public boolean enabled;
+    public int teamSize, minTeams, maxTeams;
     public int lobbyCountdown, gameLength;
-    public  List<Integer> refillTimes = new ArrayList<>();
+    public List<Integer> refillTimes = new ArrayList<>();
     public HashMap<String, Location> teams = new HashMap<>();
-    public  HashMap<Location, String> chests = new HashMap<>();
+    public HashMap<Location, String> chests = new HashMap<>();
     public Cuboid cuboid = new Cuboid(new Location(Bukkit.getWorlds().get(0), 0, 0, 0), new Location(Bukkit.getWorlds().get(0), 0, 0, 0));
 
     public Arena(String name) {
@@ -104,7 +107,7 @@ public class Arena {
                 } else {
                     return (((HashMap) element).size() > 0 ? ChatColor.BLUE : ChatColor.RED) + "" + ((HashMap) element).size() + " set.";
                 }
-            } else if (element instanceof  Integer) {
+            } else if (element instanceof Integer) {
                 return (Integer) element > 0 ? ChatColor.BLUE + "" + element : ChatColor.RED + "" + element;
             } else if (element instanceof Boolean) {
                 return (Boolean) element ? ChatColor.BLUE + "" + element : ChatColor.RED + "" + element;

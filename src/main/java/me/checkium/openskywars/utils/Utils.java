@@ -25,16 +25,15 @@ public class Utils {
     }
 
     public static void spawnParticle(Player p, Location l, int r, int g, int b) {
-        p.spigot().playEffect(l, Effect.COLOURED_DUST, 0, 1, (float) r / 255, (float)g / 255, (float) b / 255, 1, 0, 64);
+        p.spigot().playEffect(l, Effect.COLOURED_DUST, 0, 1, (float) r / 255, (float) g / 255, (float) b / 255, 1, 0, 64);
     }
 
-    public static Color translateChatColorToColor(ChatColor chatColor)
-    {
+    public static Color translateChatColorToColor(ChatColor chatColor) {
         switch (chatColor) {
             case AQUA:
                 return Color.fromRGB(85, 255, 255);
             case BLACK:
-                return Color.fromRGB(0	,0,0);
+                return Color.fromRGB(0, 0, 0);
             case BLUE:
                 return Color.fromRGB(85, 85, 255);
             case DARK_AQUA:
@@ -56,13 +55,13 @@ public class Utils {
             case GREEN:
                 return Color.fromRGB(85, 255, 85);
             case LIGHT_PURPLE:
-                return Color.fromRGB(255,85,255);
+                return Color.fromRGB(255, 85, 255);
             case RED:
                 return Color.fromRGB(255, 85, 85);
             case WHITE:
                 return Color.fromRGB(255, 255, 255);
             case YELLOW:
-                return Color.fromRGB(255,255,85);
+                return Color.fromRGB(255, 255, 85);
             default:
                 break;
         }

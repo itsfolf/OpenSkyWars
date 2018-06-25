@@ -2,12 +2,10 @@ package me.checkium.openskywars.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Cuboid {
     private int x1;
@@ -26,6 +24,14 @@ public class Cuboid {
         x2 = Math.max(location.getBlockX(), location2.getBlockX());
         y2 = Math.max(location.getBlockY(), location2.getBlockY());
         z2 = Math.max(location.getBlockZ(), location2.getBlockZ());
+    }
+
+    public static Cuboid fromString(String s) {
+        String[] args = s.split(", ");
+        World w = Bukkit.getWorld(args[0]);
+        Location l1 = new Location(w, Double.valueOf(args[1]), Double.valueOf(args[2]), Double.valueOf(args[3]));
+        Location l2 = new Location(w, Double.valueOf(args[4]), Double.valueOf(args[5]), Double.valueOf(args[6]));
+        return new Cuboid(l1, l2);
     }
 
     public boolean contains(Location location) {
@@ -87,17 +93,8 @@ public class Cuboid {
         return locs;
     }
 
-
     public String toString() {
         return String.valueOf(worldName) + ", " + x1 + ", " + y1 + ", " + z1 + ", " + x2 + ", " + y2 + ", " + z2;
-    }
-
-    public static Cuboid fromString(String s) {
-        String[] args = s.split(", ");
-        World w = Bukkit.getWorld(args[0]);
-        Location l1 = new Location(w, Double.valueOf(args[1]), Double.valueOf(args[2]), Double.valueOf(args[3]));
-        Location l2 = new Location(w, Double.valueOf(args[4]), Double.valueOf(args[5]), Double.valueOf(args[6]));
-        return new Cuboid(l1, l2);
     }
 
 

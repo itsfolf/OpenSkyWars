@@ -17,7 +17,7 @@ public class ChainedTextComponent {
     private TextComponent comp;
 
     public ChainedTextComponent(String text) {
-         comp = new TextComponent(text);
+        comp = new TextComponent(text);
     }
 
     public ChainedTextComponent color(ChatColor color) {

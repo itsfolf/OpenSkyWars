@@ -16,24 +16,27 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class BorderSetup implements Listener {
 
     public static List<BorderSetup> setups = new ArrayList<>();
-
-    private Arena arena;
     public Player player;
+    private Arena arena;
     private ItemStack[] contents;
     private ItemStack[] armorContents;
+    private BukkitTask task;
+    private List<Location> l = new ArrayList<>();
+    private Location l1;
+    private Location l2;
+
+
     public BorderSetup(Arena a, Player p) {
         this.player = p;
         this.arena = a;
         setups.add(this);
     }
-private BukkitTask task;
-    private List<Location> l = new ArrayList<>();
+
     public void init() {
         contents = player.getInventory().getContents().clone();
         armorContents = player.getInventory().getArmorContents().clone();
@@ -41,12 +44,9 @@ private BukkitTask task;
         player.getInventory().setItem(0, ItemUtils.named(Material.BLAZE_ROD, 1, ChatColor.GREEN + "Selection wand"));
         player.getInventory().setItem(8, ItemUtils.named(Material.REDSTONE, 1, ChatColor.GREEN + "Exit"));
         Bukkit.getServer().getPluginManager().registerEvents(this, OpenSkyWars.getInstance());
-        task = Bukkit.getScheduler().runTaskTimer(OpenSkyWars.getInstance(), () -> l.forEach(location -> player.spigot().playEffect(location, Effect.COLOURED_DUST, 0, 1, (float) Math.random(),(float) Math.random(),(float) Math.random(), 1, 0, 64)), 0L, 5L);
+        task = Bukkit.getScheduler().runTaskTimer(OpenSkyWars.getInstance(), () -> l.forEach(location -> player.spigot().playEffect(location, Effect.COLOURED_DUST, 0, 1, (float) Math.random(), (float) Math.random(), (float) Math.random(), 1, 0, 64)), 0L, 5L);
     }
 
-
-    private Location l1;
-    private Location l2;
     @EventHandler
     public void interact(PlayerInteractEvent e) {
         if (e.getPlayer().equals(player)) {
@@ -78,11 +78,11 @@ private BukkitTask task;
         setups.remove(this);
         player.sendMessage(ChatColor.GREEN + "Processing new arena region, this can take a while...");
         Bukkit.getServer().getScheduler().runTaskAsynchronously(OpenSkyWars.getInstance(), () -> {
-              arena.chests.clear();
-              List<Location> blocks = arena.cuboid.getAll();
-              int size = blocks.size();
-              int done = 0;
-              long last = 0;
+            arena.chests.clear();
+            List<Location> blocks = arena.cuboid.getAll();
+            int size = blocks.size();
+            int done = 0;
+            long last = 0;
             for (Location l : blocks) {
                 Material b = l.getBlock().getType();
                 if (b.equals(Material.CHEST)) {
@@ -94,7 +94,7 @@ private BukkitTask task;
                     last = System.currentTimeMillis();
                 }
             }
-              player.sendMessage(ChatColor.GREEN + "Finished processing arena region, found " + ChatColor.BLUE + arena.chests.size() + ChatColor.GREEN + " chests.");
+            player.sendMessage(ChatColor.GREEN + "Finished processing arena region, found " + ChatColor.BLUE + arena.chests.size() + ChatColor.GREEN + " chests.");
         });
     }
 
@@ -102,7 +102,7 @@ private BukkitTask task;
     private void sendBorderPacket() {
         if (l1 != null && l2 != null) {
             arena.cuboid = new Cuboid(l1, l2);
-            l =  arena.cuboid.getBorders();
+            l = arena.cuboid.getBorders();
         }
     }
 

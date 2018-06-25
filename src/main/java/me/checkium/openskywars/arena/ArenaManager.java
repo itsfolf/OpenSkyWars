@@ -66,7 +66,7 @@ public class ArenaManager {
             if (!arenaFile.exists()) arenaFile.createNewFile();
             Files.write(Paths.get(arenaFile.getPath()), a.serialize().toString().getBytes());
         } catch (IOException e) {
-           logger.error("Failed to save arena " + a.name + ":\n" + e.getMessage());
+            logger.error("Failed to save arena " + a.name + ":\n" + e.getMessage());
         }
     }
 

@@ -7,6 +7,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class OpenSkyWars extends JavaPlugin {
 
+    public static OpenSkyWars getInstance() {
+        return getPlugin(OpenSkyWars.class);
+    }
+
     @Override
     public void onEnable() {
         ArenaManager.get().loadArenas();
@@ -18,10 +22,6 @@ public class OpenSkyWars extends JavaPlugin {
 
     @Override
     public void onDisable() {
-          ArenaManager.get().saveArenas();
-    }
-
-    public static OpenSkyWars getInstance() {
-        return getPlugin(OpenSkyWars.class);
+        ArenaManager.get().saveArenas();
     }
 }

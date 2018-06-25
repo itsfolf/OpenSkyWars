@@ -13,6 +13,15 @@ import java.util.HashMap;
 public class TeamsConfig {
 
     private static FileConfiguration config;
+    private static HashMap<String, String> teams = new HashMap<>();
+
+    public static FileConfiguration get() {
+        return config;
+    }
+
+    public static HashMap<String, String> getTeams() {
+        return teams;
+    }
 
     public void load() {
         File configFile = new File(OpenSkyWars.getInstance().getDataFolder(), "teams.yml");
@@ -27,13 +36,5 @@ public class TeamsConfig {
             e.printStackTrace();
         }
         config.getKeys(false).forEach(s -> teams.put(s.toUpperCase(), ChatColor.translateAlternateColorCodes('&', config.getString(s))));
-    }
-
-    public static FileConfiguration get() {
-        return config;
-    }
-    private static HashMap<String, String> teams = new HashMap<>();
-    public static HashMap<String, String> getTeams() {
-        return teams;
     }
 }
