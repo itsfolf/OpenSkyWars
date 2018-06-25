@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class PacketUtils {
+class PacketUtils {
 
 
     public static void sendPacket(Player p, Object packet) {
@@ -19,7 +19,12 @@ public class PacketUtils {
         }
     }
 
-    static Class<?> getNmsClass(String nmsClassName) throws ClassNotFoundException {
+    private static Class<?> getNmsClass(String nmsClassName) throws ClassNotFoundException {
         return Class.forName("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + "." + nmsClassName);
+    }
+
+    public static double getVersion() {
+        String[] ver = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3].substring(1).split("_");
+        return Double.valueOf(ver[0] + "." + ver[1]);
     }
 }

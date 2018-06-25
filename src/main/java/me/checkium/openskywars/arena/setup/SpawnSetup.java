@@ -25,21 +25,19 @@ import java.util.List;
 public class SpawnSetup implements Listener {
     public static List<SpawnSetup> setups = new ArrayList<>();
 
-    Arena arena;
+    private Arena arena;
     public Player player;
-    ItemStack[] contents;
-    ItemStack[] armorContents;
-    ItemStack[] extraContents;
+    private ItemStack[] contents;
+    private ItemStack[] armorContents;
     public SpawnSetup(Arena a, Player p) {
         this.player = p;
         this.arena = a;
         setups.add(this);
     }
-    BukkitTask task;
+    private BukkitTask task;
     public void init() {
         contents = player.getInventory().getContents().clone();
         armorContents = player.getInventory().getArmorContents().clone();
-      //  extraContents = player.getInventory().getExtraContents().clone();
         player.getInventory().clear();
         player.getInventory().setItem(4, ItemUtils.named(Material.BEACON, 1, ChatColor.GREEN + "Spawn Setter"));
         player.getInventory().setItem(8, ItemUtils.named(Material.REDSTONE, 1, ChatColor.GREEN + "Exit"));
@@ -65,7 +63,7 @@ public class SpawnSetup implements Listener {
         }, 0L, 5L);
     }
 
-    public void exit() {
+    private void exit() {
         HandlerList.unregisterAll(this);
         task.cancel();
         player.getInventory().clear();
@@ -94,7 +92,7 @@ public class SpawnSetup implements Listener {
         }
     }
 
-    public boolean setSpawn(Location l, String team) {
+    private boolean setSpawn(Location l, String team) {
         if (!arena.cuboid.contains(l)) {
             player.sendMessage(ChatColor.RED + "Spawns need to be inside the arena area.");
             return false;
@@ -108,7 +106,7 @@ public class SpawnSetup implements Listener {
         return true;
     }
 
-    public boolean setSpawn(Location l) {
+    private boolean setSpawn(Location l) {
         String a =  getFreeTeam();
         if (a!= null) {
             return setSpawn(l, a);
@@ -118,7 +116,7 @@ public class SpawnSetup implements Listener {
         }
     }
 
-    public void removeSpawn(Location l) {
+    private void removeSpawn(Location l) {
         List<String> torem = new ArrayList<>();
         arena.teams.forEach((s, location) -> {
             if (l.clone().add(0,1,0).equals(location)) {
@@ -131,7 +129,7 @@ public class SpawnSetup implements Listener {
         });
     }
 
-    String getFreeTeam() {
+    private String getFreeTeam() {
         for (String s : TeamsConfig.getTeams().keySet()) {
             if (!arena.teams.containsKey(s)) {
                 return s;
@@ -140,16 +138,14 @@ public class SpawnSetup implements Listener {
         return null;
     }
 
-    Location current;
+    private Location current;
     @EventHandler
     public void interact(PlayerInteractEvent e) {
         if (e.getPlayer().equals(player)) {
             if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                 if (e.getClickedBlock().getType().equals(Material.BEACON)) {
                     Inventory inv = Bukkit.createInventory(null, (int) Math.ceil(TeamsConfig.getTeams().size() / 8.0) * 9, ChatColor.GREEN + "Select Team");
-                    TeamsConfig.getTeams().forEach((s, s2) -> {
-                        inv.addItem(ItemUtils.named(Material.WOOL, 1, s2));
-                    });
+                    TeamsConfig.getTeams().forEach((s, s2) -> inv.addItem(ItemUtils.named(Material.WOOL, 1, s2)));
                     player.openInventory(inv);
                     current = e.getClickedBlock().getLocation();
                     e.setCancelled(true);

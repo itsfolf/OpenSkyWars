@@ -12,11 +12,10 @@ import java.util.HashMap;
 
 public class TeamsConfig {
 
-    private File configFile;
     private static FileConfiguration config;
 
     public void load() {
-        configFile = new File(OpenSkyWars.getInstance().getDataFolder(), "teams.yml");
+        File configFile = new File(OpenSkyWars.getInstance().getDataFolder(), "teams.yml");
         if (!configFile.exists()) {
             configFile.getParentFile().mkdirs();
             OpenSkyWars.getInstance().saveResource("teams.yml", false);
@@ -27,15 +26,13 @@ public class TeamsConfig {
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-        config.getKeys(false).forEach(s -> {
-            teams.put(s.toUpperCase(), ChatColor.translateAlternateColorCodes('&', config.getString(s)));
-        });
+        config.getKeys(false).forEach(s -> teams.put(s.toUpperCase(), ChatColor.translateAlternateColorCodes('&', config.getString(s))));
     }
 
     public static FileConfiguration get() {
         return config;
     }
-    static HashMap<String, String> teams = new HashMap<>();
+    private static HashMap<String, String> teams = new HashMap<>();
     public static HashMap<String, String> getTeams() {
         return teams;
     }

@@ -5,8 +5,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Achievement;
-import org.bukkit.Bukkit;
 
 /**
  * Class to easily create text components
@@ -16,7 +14,7 @@ import org.bukkit.Bukkit;
  */
 public class ChainedTextComponent {
 
-    TextComponent comp;
+    private TextComponent comp;
 
     public ChainedTextComponent(String text) {
          comp = new TextComponent(text);

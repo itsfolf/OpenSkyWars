@@ -53,7 +53,7 @@ public class Skyoconfig {
      * @param configFile The file where the configuration will be loaded an saved.
      */
 
-    protected Skyoconfig(final File configFile) {
+    private Skyoconfig(final File configFile) {
         this(configFile, null);
     }
 
@@ -223,7 +223,7 @@ public class Skyoconfig {
      * @throws InstantiationException When a <b>Map</b> cannot be created.
      */
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
     private Object deserializeObject(final Class<?> clazz, final Object object) throws ParseException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         if(clazz.isPrimitive()) {
             return Primitives.wrap(clazz).getMethod("valueOf", String.class).invoke(this, object.toString());

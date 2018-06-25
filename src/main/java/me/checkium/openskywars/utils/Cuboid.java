@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -17,7 +16,7 @@ public class Cuboid {
     private int x2;
     private int y2;
     private int z2;
-    public String worldName;
+    private String worldName;
 
     public Cuboid(Location location, Location location2) {
         worldName = location.getWorld().getName();
@@ -30,14 +29,7 @@ public class Cuboid {
     }
 
     public boolean contains(Location location) {
-        if (!location.getWorld().getName().equals(worldName)) return false;
-        if (location.getBlockX() < x1) return false;
-        if (location.getBlockX() > x2) return false;
-        if (location.getBlockY() <= y1) return false;
-        if (location.getBlockY() >= y2) return false;
-        if (location.getBlockZ() < z1) return false;
-        if (location.getBlockZ() > z2) return false;
-        return true;
+        return location.getWorld().getName().equals(worldName) && location.getBlockZ() <= z2 && location.getBlockX() >= x1 && location.getBlockX() <= x2 && location.getBlockY() > y1 && location.getBlockY() < y2 && location.getBlockZ() >= z1;
     }
 
     public int getLowerY() {
@@ -93,22 +85,6 @@ public class Cuboid {
             }
         }
         return locs;
-    }
-
-    public Location getRandomLocation() {
-        int n;
-        Random random;
-        int n2;
-        int n3;
-        Location location;
-        World world = Bukkit.getWorld(worldName);
-        Location location2 = new Location(world, (x1 + (n3 = (random = new Random()).nextInt(x2 - x1 + 1))), (y1 + (n = random.nextInt(y2 - y1 + 1))), (z1 + (n2 = random.nextInt(z2 - z1 + 1))));
-        if (location2.getBlock().getType().equals(Material.AIR)) {
-            location = location2;
-            return location;
-        }
-        location = world.getHighestBlockAt(location2).getLocation();
-        return location;
     }
 
 

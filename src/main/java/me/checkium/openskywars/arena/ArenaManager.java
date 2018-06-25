@@ -5,16 +5,13 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import me.checkium.openskywars.OpenSkyWars;
 import me.checkium.openskywars.utils.Logger;
-import org.apache.commons.lang.CharSet;
 import org.bukkit.ChatColor;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +19,7 @@ public class ArenaManager {
 
     private static ArenaManager instance;
     public List<Arena> loadedArenas = new ArrayList<>();
-    Logger logger = Logger.getLogger("ArenaManager");
+    private Logger logger = Logger.getLogger("ArenaManager");
 
     public static ArenaManager get() {
         if (instance == null) {

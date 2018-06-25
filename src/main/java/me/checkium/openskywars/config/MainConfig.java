@@ -5,7 +5,7 @@ import me.checkium.openskywars.OpenSkyWars;
 import java.io.File;
 import java.util.Arrays;
 
-public class MainConfig extends fr.skyost.utils.Skyoconfig {
+class MainConfig extends fr.skyost.utils.Skyoconfig {
 
     public MainConfig() {
         super(new File(OpenSkyWars.getInstance().getDataFolder(), "/config.yml"), Arrays.asList("header"));

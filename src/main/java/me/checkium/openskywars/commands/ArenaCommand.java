@@ -9,10 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.GregorianCalendar;
 import java.util.stream.Collectors;
 
-public class ArenaCommand {
+class ArenaCommand {
 
     public void process(CommandSender sender, String[] args) {
         if (args.length > 1) {
@@ -113,7 +112,7 @@ public class ArenaCommand {
             } else if (args.length > 2 && arena != null) {
                 switch(args[2].toLowerCase()) {
                     case "spawnsetup":
-                        if (SpawnSetup.setups.stream().filter(spawnSetup -> spawnSetup.player.equals(sender)).count() > 0) {
+                        if (SpawnSetup.setups.stream().anyMatch(spawnSetup -> spawnSetup.player.equals(sender))) {
                             sender.sendMessage(ChatColor.RED + "You are already on setup mode.");
                         } else {
                             SpawnSetup s = new SpawnSetup(arena, (Player) sender);
@@ -158,7 +157,7 @@ public class ArenaCommand {
         return (SpawnSetup.setups.stream().filter(spawnSetup -> spawnSetup.player.equals(p)).count() > 0);
     }
 
-    public boolean isInt(CommandSender s, String arg) {
+    private boolean isInt(CommandSender s, String arg) {
         try {
             Integer.valueOf(arg);
             return true;

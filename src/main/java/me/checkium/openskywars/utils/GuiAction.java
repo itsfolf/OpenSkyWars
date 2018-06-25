@@ -20,12 +20,12 @@ import java.util.List;
  */
 public class GuiAction implements Listener {
 
-    String title;
-    ItemStack main;
-    List<ItemStack> options = new ArrayList<>();
-    List<Runnable> runnables = new ArrayList<>();
-    Inventory inv;
-    Player p;
+    private String title;
+    private ItemStack main;
+    private List<ItemStack> options = new ArrayList<>();
+    private List<Runnable> runnables = new ArrayList<>();
+    private Inventory inv;
+    private Player p;
 
     public GuiAction(String title, ItemStack main, List<ItemStack> options, List<Runnable> runnables, Player p) {
         this.title = title;
@@ -54,7 +54,7 @@ public class GuiAction implements Listener {
         return this;
     }
 
-    public void build(Player p) {
+    private void build(Player p) {
         inv = Bukkit.createInventory(null, 9 * 4, title);
         inv.setItem(4, main);
         int n = 0;

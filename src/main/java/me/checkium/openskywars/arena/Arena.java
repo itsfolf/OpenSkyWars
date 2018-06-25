@@ -7,7 +7,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.json.simple.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +31,7 @@ public class Arena {
         this.prettyName = name;
     }
 
-    public Arena(JsonObject data) {
+    Arena(JsonObject data) {
         this.name = data.get("name").getAsString();
         this.prettyName = data.get("prettyName").getAsString();
         this.enabled = data.get("enabled").getAsBoolean();
@@ -42,16 +41,12 @@ public class Arena {
         this.lobbyCountdown = data.get("lobbyCountdown").getAsInt();
         this.gameLength = data.get("gameLength").getAsInt();
         this.refillTimes = toArray(data.get("refillTimes").getAsJsonArray()).stream().map(JsonElement::getAsInt).collect(Collectors.toList());
-        toArray(data.get("teams").getAsJsonArray()).stream().map(JsonElement::getAsJsonObject).collect(Collectors.toList()).forEach(jsonObject -> {
-            teams.put(jsonObject.get("name").getAsString(), fromString(jsonObject.get("spawnpoint").getAsString()));
-        });
-        toArray(data.get("chests").getAsJsonArray()).stream().map(JsonElement::getAsJsonObject).collect(Collectors.toList()).forEach(jsonObject -> {
-            chests.put(fromString(jsonObject.get("location").getAsString()), jsonObject.get("type").getAsString());
-        });
+        toArray(data.get("teams").getAsJsonArray()).stream().map(JsonElement::getAsJsonObject).collect(Collectors.toList()).forEach(jsonObject -> teams.put(jsonObject.get("name").getAsString(), fromString(jsonObject.get("spawnpoint").getAsString())));
+        toArray(data.get("chests").getAsJsonArray()).stream().map(JsonElement::getAsJsonObject).collect(Collectors.toList()).forEach(jsonObject -> chests.put(fromString(jsonObject.get("location").getAsString()), jsonObject.get("type").getAsString()));
         this.cuboid = Cuboid.fromString(data.get("cuboid").getAsString());
     }
 
-    public JsonObject serialize() {
+    JsonObject serialize() {
         JsonObject object = new JsonObject();
         object.addProperty("name", name);
         object.addProperty("prettyName", prettyName);
@@ -98,10 +93,10 @@ public class Arena {
                 .add(new ChainedTextComponent("\n============").color(ChatColor.GREEN).add(new ChainedTextComponent("Save").suggestOnClick(command() + " save").color(ChatColor.GREEN).bold().add(new ChainedTextComponent("=============").color(ChatColor.GREEN)))).get();
     }
 
-    public String getElement(Object element) {
+    private String getElement(Object element) {
         if (element != null) {
             if (element instanceof List) {
-                String r = ChatColor.BLUE + "" + ((List) element).stream().map(o -> o.toString()).collect(Collectors.joining(", "));
+                String r = ChatColor.BLUE + "" + ((List) element).stream().map(Object::toString).collect(Collectors.joining(", "));
                 return r.length() < 3 ? ChatColor.RED + "None." : r;
             } else if (element instanceof HashMap) {
                 if (((HashMap) element).keySet().stream().anyMatch(o -> o instanceof String)) {
@@ -145,7 +140,7 @@ public class Arena {
         return response;
     }
 
-    public String command() {
+    private String command() {
         return "/osw arena " + name;
     }
 }

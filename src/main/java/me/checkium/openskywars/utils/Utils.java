@@ -1,7 +1,6 @@
 package me.checkium.openskywars.utils;
 
 import com.google.gson.JsonArray;
-
 import com.google.gson.JsonElement;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -12,7 +11,7 @@ public class Utils {
 
     public static ArrayList<JsonElement> toArray(JsonArray array) {
         ArrayList<JsonElement> r = new ArrayList<>();
-        array.forEach(a -> r.add(a));
+        array.forEach(r::add);
         return r;
     }
 
