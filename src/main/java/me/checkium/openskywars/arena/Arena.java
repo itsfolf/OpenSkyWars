@@ -6,6 +6,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.checkium.openskywars.utils.ChainedTextComponent;
 import me.checkium.openskywars.utils.Cuboid;
+import me.checkium.openskywars.utils.Utils;
+import me.checkium.openskywars.utils.WorldUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -28,6 +30,8 @@ public class Arena {
     public HashMap<String, Location> teams = new HashMap<>();
     public HashMap<Location, String> chests = new HashMap<>();
     public Cuboid cuboid = new Cuboid(new Location(Bukkit.getWorlds().get(0), 0, 0, 0), new Location(Bukkit.getWorlds().get(0), 0, 0, 0));
+    public List<Location> signs = new ArrayList<>();
+    public Location lobby;
 
     public Arena(String name) {
         this.name = name;
@@ -44,9 +48,12 @@ public class Arena {
         this.lobbyCountdown = data.get("lobbyCountdown").getAsInt();
         this.gameLength = data.get("gameLength").getAsInt();
         this.refillTimes = toArray(data.get("refillTimes").getAsJsonArray()).stream().map(JsonElement::getAsInt).collect(Collectors.toList());
+        this.cuboid = Cuboid.fromString(data.get("cuboid").getAsString());
+        WorldUtils.getWorld(cuboid.worldName);
         toArray(data.get("teams").getAsJsonArray()).stream().map(JsonElement::getAsJsonObject).collect(Collectors.toList()).forEach(jsonObject -> teams.put(jsonObject.get("name").getAsString(), fromString(jsonObject.get("spawnpoint").getAsString())));
         toArray(data.get("chests").getAsJsonArray()).stream().map(JsonElement::getAsJsonObject).collect(Collectors.toList()).forEach(jsonObject -> chests.put(fromString(jsonObject.get("location").getAsString()), jsonObject.get("type").getAsString()));
-        this.cuboid = Cuboid.fromString(data.get("cuboid").getAsString());
+        this.signs = toArray(data.get("signs").getAsJsonArray()).stream().map(jsonElement -> Utils.fromString(jsonElement.getAsString())).collect(Collectors.toList());
+        this.lobby = Utils.fromString(data.get("lobby").getAsString());
     }
 
     JsonObject serialize() {
@@ -62,6 +69,7 @@ public class Arena {
         object.add("refillTimes", new GsonBuilder().create().toJsonTree(refillTimes));
         JsonArray teamsArray = new JsonArray();
         teams.forEach((s, location) -> {
+            WorldUtils.getWorld(cuboid.worldName);
             JsonObject teamsObject = new JsonObject();
             teamsObject.addProperty("name", s);
             teamsObject.addProperty("spawnpoint", locationToString(location));
@@ -77,6 +85,8 @@ public class Arena {
         });
         object.add("chests", chestsArray);
         object.addProperty("cuboid", cuboid.toString());
+        object.add("signs", new GsonBuilder().create().toJsonTree(signs.stream().map(location -> Utils.locationToString(location)).collect(Collectors.toList())));
+        object.addProperty("lobby", Utils.locationToString(lobby));
         return object;
     }
 
@@ -90,9 +100,10 @@ public class Arena {
                 .add(new ChainedTextComponent("\nLobby countdown - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(lobbyCountdown)).suggestOnClick(command() + " lobbycountdown <number>"))
                 .add(new ChainedTextComponent("\nGame length - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(gameLength)).suggestOnClick(command() + " gameLength <number>"))
                 .add(new ChainedTextComponent("\nRefill times - ").color(ChatColor.GREEN).add(new ChainedTextComponent(getElement(refillTimes)).suggestOnClick(command() + " refilltimes <add/remove> <number>")))
-                .add(new ChainedTextComponent("\nTeams - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(teams)).suggestOnClick(command() + " spawnsetup"))
-                .add(new ChainedTextComponent("\nChests - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(chests)).suggestOnClick(command() + " chestsetup"))
                 .add(new ChainedTextComponent("\nSize - ").color(ChatColor.GREEN)).add(new ChainedTextComponent("" + cuboid.getSize()).color(cuboid.getSize() > 1 ? ChatColor.BLUE : ChatColor.RED).suggestOnClick(command() + " bordersetup"))
+                .add(new ChainedTextComponent("\nTeams - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(teams)).suggestOnClick(command() + " spawnsetup"))
+                .add(new ChainedTextComponent("\nLobby - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(lobby)).suggestOnClick(command() + " lobby"))
+                .add(new ChainedTextComponent("\nChests - ").color(ChatColor.GREEN)).add(new ChainedTextComponent(getElement(chests)).suggestOnClick(command() + " chestsetup"))
                 .add(new ChainedTextComponent("\n============").color(ChatColor.GREEN).add(new ChainedTextComponent("Save").suggestOnClick(command() + " save").color(ChatColor.GREEN).bold().add(new ChainedTextComponent("=============").color(ChatColor.GREEN)))).get();
     }
 
@@ -111,6 +122,8 @@ public class Arena {
                 return (Integer) element > 0 ? ChatColor.BLUE + "" + element : ChatColor.RED + "" + element;
             } else if (element instanceof Boolean) {
                 return (Boolean) element ? ChatColor.BLUE + "" + element : ChatColor.RED + "" + element;
+            } else if (element instanceof Location) {
+                return Utils.locationToString((Location) element);
             } else {
                 return ChatColor.BLUE + element.toString();
             }

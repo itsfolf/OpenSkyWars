@@ -26,4 +26,8 @@ public class Logger {
     public void error(String message) {
         Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[OpenSkyWars-" + name + "] " + message);
     }
+
+    public void debug(String message) {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE + "[OpenSkyWars-" + name + "] " + message);
+    }
 }

@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cuboid {
-    private int x1;
-    private int y1;
-    private int z1;
-    private int x2;
-    private int y2;
-    private int z2;
-    private String worldName;
+    public int x1;
+    public int y1;
+    public int z1;
+    public int x2;
+    public int y2;
+    public int z2;
+    public String worldName;
 
     public Cuboid(Location location, Location location2) {
         worldName = location.getWorld().getName();
@@ -28,7 +28,7 @@ public class Cuboid {
 
     public static Cuboid fromString(String s) {
         String[] args = s.split(", ");
-        World w = Bukkit.getWorld(args[0]);
+        World w = WorldUtils.getWorld(args[0]);
         Location l1 = new Location(w, Double.valueOf(args[1]), Double.valueOf(args[2]), Double.valueOf(args[3]));
         Location l2 = new Location(w, Double.valueOf(args[4]), Double.valueOf(args[5]), Double.valueOf(args[6]));
         return new Cuboid(l1, l2);

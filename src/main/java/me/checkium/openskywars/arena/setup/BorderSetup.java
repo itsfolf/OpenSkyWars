@@ -2,6 +2,7 @@ package me.checkium.openskywars.arena.setup;
 
 import me.checkium.openskywars.OpenSkyWars;
 import me.checkium.openskywars.arena.Arena;
+import me.checkium.openskywars.arena.ArenaManager;
 import me.checkium.openskywars.utils.Cuboid;
 import me.checkium.openskywars.utils.ItemUtils;
 import me.checkium.openskywars.utils.Utils;
@@ -13,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
@@ -54,11 +56,11 @@ public class BorderSetup implements Listener {
                 if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     l1 = e.getClickedBlock().getLocation();
                     player.sendMessage(ChatColor.GREEN + "Set first corner to " + ChatColor.BLUE + Utils.locationToString(l1));
-                    sendBorderPacket();
+                    updateBorders();
                 } else if (e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
                     l2 = e.getClickedBlock().getLocation();
                     player.sendMessage(ChatColor.GREEN + "Set second corner to " + ChatColor.BLUE + Utils.locationToString(l2));
-                    sendBorderPacket();
+                    updateBorders();
                 }
                 e.setCancelled(true);
             } else if (e.getPlayer().getItemInHand().getType().equals(Material.REDSTONE) && e.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains("Exit")) {
@@ -90,16 +92,25 @@ public class BorderSetup implements Listener {
                 }
                 done++;
                 if (last < System.currentTimeMillis() - 3000) {
-                    player.sendMessage(ChatColor.GREEN + "" + ((done / size) * 100) + "% done..");
+                    player.sendMessage(ChatColor.GREEN + "ChestSearcher: " + ((done / size) * 100) + "% done..");
                     last = System.currentTimeMillis();
                 }
             }
-            player.sendMessage(ChatColor.GREEN + "Finished processing arena region, found " + ChatColor.BLUE + arena.chests.size() + ChatColor.GREEN + " chests.");
+            player.sendMessage(ChatColor.GREEN + "Finished chest searching, found " + ChatColor.BLUE + arena.chests.size() + ChatColor.GREEN + " chests.");
         });
+        long start = System.currentTimeMillis();
+        player.sendMessage(ChatColor.GREEN + "Saving arena region to file cache...");
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ArenaManager.get().saveArenaBlocks(arena);
+                player.sendMessage(ChatColor.GREEN + "Saved arena region to file cache in " + ChatColor.BLUE + (System.currentTimeMillis() - start) + ChatColor.GREEN + "ms.");
+            }
+        }.runTaskAsynchronously(OpenSkyWars.getInstance());
     }
 
 
-    private void sendBorderPacket() {
+    private void updateBorders() {
         if (l1 != null && l2 != null) {
             arena.cuboid = new Cuboid(l1, l2);
             l = arena.cuboid.getBorders();

@@ -1,14 +1,20 @@
 package me.checkium.openskywars.commands;
 
+import me.checkium.openskywars.OpenSkyWars;
 import me.checkium.openskywars.arena.Arena;
 import me.checkium.openskywars.arena.ArenaManager;
 import me.checkium.openskywars.arena.setup.BorderSetup;
 import me.checkium.openskywars.arena.setup.SpawnSetup;
+import me.checkium.openskywars.game.regen.GameReset;
+import me.checkium.openskywars.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 class ArenaCommand {
@@ -108,6 +114,22 @@ class ArenaCommand {
                         arena.prettyName = name;
                         sender.sendMessage(ChatColor.GREEN + "Set " + ChatColor.BLUE + arenaName + ChatColor.GREEN + "'s name to " + name);
                         break;
+                    case "reset":
+                        if (args[3].equals("confirm")) {
+                            sender.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Resetting arena...");
+                            File arenaFolder = new File(OpenSkyWars.getInstance().getDataFolder() + "/arenas");
+                            if (!arenaFolder.exists()) arenaFolder.mkdirs();
+                            File blocksFile = new File(arenaFolder, arena.name + "_blocks");
+                            if (blocksFile.exists()) {
+                                GameReset reset = new GameReset(arena);
+                                reset.loadBlocksFromFile(blocksFile, false);
+                            } else {
+                                sender.sendMessage(ChatColor.RED + "Couldn't find blocks file for arena" + arena.name);
+                            }
+                        } else {
+                            sender.sendMessage(ChatColor.GREEN + "Canceled arena reset.");
+                        }
+                        break;
                 }
             } else if (args.length > 2 && arena != null) {
                 switch (args[2].toLowerCase()) {
@@ -134,6 +156,14 @@ class ArenaCommand {
                         ArenaManager.get().saveArena(arena);
                         long num = System.currentTimeMillis() - a;
                         sender.sendMessage(ChatColor.GREEN + "Saved arena " + ChatColor.BLUE + arenaName + ChatColor.GREEN + " in " + ChatColor.BLUE + num + ChatColor.GREEN + "ms.");
+                        break;
+                    case "lobby":
+                        arena.lobby = ((Player) sender).getLocation();
+                        sender.sendMessage(ChatColor.GREEN + "Set the lobby for " + ChatColor.BLUE + arenaName + ChatColor.GREEN + " to " + ChatColor.BLUE + Utils.locationToString(arena.lobby));
+                        break;
+                    case "reset":
+                        sender.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "WARNING!" + ChatColor.RESET + "" + ChatColor.RED + " This command will PERMANENTLY rollback the arena to the last time it was saved, " +
+                                "this is intended for server crashes and cannot be undone, use" + ChatColor.BLUE + " /osw arena " + arenaName + " reset confirm" + ChatColor.RED + " to continue.");
                         break;
                 }
             } else {
@@ -165,5 +195,24 @@ class ArenaCommand {
             s.sendMessage(ChatColor.RED + arg + " is not a valid number!");
         }
         return false;
+    }
+
+    public List<String> tabComplete(String[] args) {
+        if (args.length > 2) {
+            if (args.length == 3) {
+                return Utils.match(args[2], Arrays.asList("lobby", "enabled", "teamsize", "minteams", "maxteams", "lobbycountdown", "gamelength", "refilltimes", "name", "spawnsetup", "chestsetup", "bordersetup", "save"));
+            } else {
+                switch (args[2]) {
+                    case "refilltimes":
+                        return Utils.match(args[3], Arrays.asList("add", "remove", "clear"));
+                    case "enabled":
+                    case "enable":
+                        return Utils.match(args[3], Arrays.asList("true", "false"));
+                }
+            }
+        } else {
+            return Utils.match(args[1], ArenaManager.get().loadedArenas.stream().map(arena -> arena.name).collect(Collectors.toList()));
+        }
+        return Collections.emptyList();
     }
 }

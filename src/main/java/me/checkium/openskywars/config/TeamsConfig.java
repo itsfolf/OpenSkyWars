@@ -23,7 +23,7 @@ public class TeamsConfig {
         return teams;
     }
 
-    public void load() {
+    public TeamsConfig() {
         File configFile = new File(OpenSkyWars.getInstance().getDataFolder(), "teams.yml");
         if (!configFile.exists()) {
             configFile.getParentFile().mkdirs();

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import me.checkium.openskywars.OpenSkyWars;
+import me.checkium.openskywars.game.regen.GameReset;
 import me.checkium.openskywars.utils.Logger;
 import org.bukkit.ChatColor;
 
@@ -36,7 +37,7 @@ public class ArenaManager {
         File[] files = arenaFolder.listFiles();
         int num = 0, invalid = 0;
         for (File file : files) {
-            if (!file.isDirectory()) {
+            if (!file.isDirectory() && !file.getName().endsWith("_blocks")) {
                 try {
                     String content = Files.readAllLines(Paths.get(file.getPath())).stream().collect(Collectors.joining());
                     try {
@@ -67,6 +68,22 @@ public class ArenaManager {
             Files.write(Paths.get(arenaFile.getPath()), a.serialize().toString().getBytes());
         } catch (IOException e) {
             logger.error("Failed to save arena " + a.name + ":\n" + e.getMessage());
+        }
+    }
+
+    public void saveArenaBlocks(Arena a) {
+        try {
+            File arenaFolder = new File(OpenSkyWars.getInstance().getDataFolder() + "/arenas");
+            if (!arenaFolder.exists()) arenaFolder.mkdirs();
+            File blocksFile = new File(arenaFolder, a.name + "_blocks");
+            if (!blocksFile.exists()) blocksFile.createNewFile();
+            GameReset r = new GameReset(a);
+            a.cuboid.getAll().forEach(location -> {
+                r.addChanged(location.getBlock());
+            });
+            r.saveBlocksToFile(blocksFile);
+        } catch (IOException e) {
+            logger.error("Failed to save blocks for arena " + a.name + ":\n" + e.getMessage());
         }
     }
 

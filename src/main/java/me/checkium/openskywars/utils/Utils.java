@@ -2,10 +2,13 @@ package me.checkium.openskywars.utils;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import me.checkium.openskywars.arena.Arena;
+import me.checkium.openskywars.arena.ArenaManager;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Utils {
 
@@ -67,4 +70,25 @@ public class Utils {
         }
         return null;
     }
+
+    public static Arena getSignOwner(Location l) {
+        for (Arena loadedArena : ArenaManager.get().loadedArenas) {
+            for (Location sign : loadedArena.signs) {
+                if (l.equals(sign)) return loadedArena;
+            }
+        }
+        return null;
+    }
+
+    public static List<String> match(String match, List<String> options) {
+        List<String> matches = new ArrayList<>();
+        for (String option : options) {
+            if (option.startsWith(match)) {
+                matches.add(option);
+            }
+        }
+        return matches;
+    }
+
+
 }

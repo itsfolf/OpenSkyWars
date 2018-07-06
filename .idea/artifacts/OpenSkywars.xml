@@ -6,6 +6,9 @@
       <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/plugin.yml" />
       <element id="module-output" name="OpenSkyWars_main" />
       <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/teams.yml" />
+      <element id="directory" name="chests">
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/chests/basic.yml" />
+      </element>
     </root>
   </artifact>
 </component>
