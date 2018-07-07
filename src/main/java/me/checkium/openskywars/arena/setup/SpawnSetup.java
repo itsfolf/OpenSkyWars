@@ -71,6 +71,7 @@ public class SpawnSetup implements Listener {
         player.getInventory().clear();
         player.getInventory().setContents(contents);
         player.getInventory().setArmorContents(armorContents);
+        player.updateInventory();
         setups.remove(this);
     }
 

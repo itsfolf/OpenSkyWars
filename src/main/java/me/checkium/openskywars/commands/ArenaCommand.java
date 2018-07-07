@@ -4,6 +4,7 @@ import me.checkium.openskywars.OpenSkyWars;
 import me.checkium.openskywars.arena.Arena;
 import me.checkium.openskywars.arena.ArenaManager;
 import me.checkium.openskywars.arena.setup.BorderSetup;
+import me.checkium.openskywars.arena.setup.ChestSetup;
 import me.checkium.openskywars.arena.setup.SpawnSetup;
 import me.checkium.openskywars.game.regen.GameReset;
 import me.checkium.openskywars.utils.Utils;
@@ -142,6 +143,12 @@ class ArenaCommand {
                         }
                         break;
                     case "chestsetup":
+                        if (ChestSetup.setups.stream().anyMatch(spawnSetup -> spawnSetup.player.equals(sender))) {
+                            sender.sendMessage(ChatColor.RED + "You are already on setup mode.");
+                        } else {
+                            ChestSetup s = new ChestSetup(arena, (Player) sender);
+                            s.init();
+                        }
                         break;
                     case "bordersetup":
                         if (BorderSetup.setups.stream().filter(spawnSetup -> spawnSetup.player.equals(sender)).count() > 0) {

@@ -25,27 +25,27 @@ public class GameScoreboard {
 
     public void update() {
         scoreboards.forEach((player, scoreboard) -> {
-          scoreboard.getTeams().forEach(Team::unregister);
-          scoreboard.getObjectives().forEach(Objective::unregister);
-          Objective arena = scoreboard.registerNewObjective("OpenSkyWars", "dummy");
-          game.players.forEach((player1, s) -> {
-              Team t = scoreboard.registerNewTeam(TeamsConfig.getTeams().get(s));
-              t.setPrefix(ChatColor.valueOf(s) + "");
-              t.addEntry(player1.getDisplayName());
-              if (player1 == player) {
-                  arena.getScore(ChatColor.GREEN + "Team: " + ChatColor.BLUE + TeamsConfig.getTeams().get(s)).setScore(0);
-              }
-          });
-          arena.setDisplaySlot(DisplaySlot.SIDEBAR);
-         if (game.state == Game.GameState.INGAME) {
-             arena.getScore(ChatColor.GREEN + "Arena: " + ChatColor.BLUE + game.arena.prettyName).setScore(3);
-             arena.getScore(ChatColor.GREEN + "Kills: " + ChatColor.BLUE + game.listener.kills.get(player)).setScore(2);
-             arena.getScore(ChatColor.GREEN + "Assists: " + ChatColor.BLUE + game.listener.assists.get(player)).setScore(1);
-         } else if (game.state.equals(Game.GameState.STARTING)) {
-             arena.getScore(ChatColor.GREEN + "Starting in: ").setScore(2);
-             arena.getScore(ChatColor.GOLD + "" + game.secLeft + " seconds...").setScore(1);
-         }
-          player.setScoreboard(scoreboard);
+            scoreboard.getTeams().forEach(Team::unregister);
+            scoreboard.getObjectives().forEach(Objective::unregister);
+            Objective arena = scoreboard.registerNewObjective("OpenSkyWars", "dummy");
+            game.players.forEach((player1, s) -> {
+                Team t = scoreboard.registerNewTeam(TeamsConfig.getTeams().get(s));
+                t.setPrefix(ChatColor.valueOf(s) + "");
+                t.addEntry(player1.getDisplayName());
+                if (player1 == player) {
+                    arena.getScore(ChatColor.GREEN + "Team: " + ChatColor.BLUE + TeamsConfig.getTeams().get(s)).setScore(0);
+                }
+            });
+            arena.setDisplaySlot(DisplaySlot.SIDEBAR);
+            if (game.state == Game.GameState.INGAME) {
+                arena.getScore(ChatColor.GREEN + "Arena: " + ChatColor.BLUE + game.arena.prettyName).setScore(3);
+                arena.getScore(ChatColor.GREEN + "Kills: " + ChatColor.BLUE + game.listener.kills.get(player)).setScore(2);
+                arena.getScore(ChatColor.GREEN + "Assists: " + ChatColor.BLUE + game.listener.assists.get(player)).setScore(1);
+            } else if (game.state.equals(Game.GameState.STARTING)) {
+                arena.getScore(ChatColor.GREEN + "Starting in: ").setScore(2);
+                arena.getScore(ChatColor.GOLD + "" + game.secLeft + " seconds...").setScore(1);
+            }
+            player.setScoreboard(scoreboard);
         });
     }
 }

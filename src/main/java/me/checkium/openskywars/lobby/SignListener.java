@@ -1,5 +1,6 @@
-package me.checkium.openskywars.listener;
+package me.checkium.openskywars.lobby;
 
+import me.checkium.openskywars.OpenSkyWars;
 import me.checkium.openskywars.arena.Arena;
 import me.checkium.openskywars.arena.ArenaManager;
 import me.checkium.openskywars.game.Game;
@@ -35,7 +36,7 @@ public class SignListener implements Listener {
 
     @EventHandler
     public void breakSign(BlockBreakEvent e) {
-        if (e.getBlock().getType().equals(Material.SIGN) || e.getBlock().getType().equals(Material.SIGN_POST) || e.getBlock().getType().equals(Material.WALL_SIGN))  {
+        if (e.getBlock().getType().equals(Material.SIGN_POST) || e.getBlock().getType().equals(Material.WALL_SIGN))  {
            Arena a;
            if ((a = Utils.getSignOwner(e.getBlock().getLocation())) != null) {
                a.signs.remove(e.getBlock().getLocation());
@@ -47,11 +48,14 @@ public class SignListener implements Listener {
     @EventHandler
     public void interact(PlayerInteractEvent e) {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (e.getClickedBlock().getType().equals(Material.SIGN) || e.getClickedBlock().getType().equals(Material.SIGN_POST) || e.getClickedBlock().getType().equals(Material.WALL_SIGN)) {
+            if (e.getClickedBlock().getType().equals(Material.SIGN_POST) || e.getClickedBlock().getType().equals(Material.WALL_SIGN)) {
                 Arena a;
                 if ((a = Utils.getSignOwner(e.getClickedBlock().getLocation())) != null) {
-                    Game game = GameManager.get().getGames().stream().filter(game1 -> a.equals(game1.arena)).findAny().orElse(null);
-                    if (game != null) game.join(e.getPlayer()); else e.getPlayer().sendMessage(ChatColor.RED + "Couldn't find game");
+                    if (OpenSkyWars.getInstance().getLobby().isInLobby(e.getPlayer())) {
+                        Game game = GameManager.get().getGames().stream().filter(game1 -> a.equals(game1.arena)).findAny().orElse(null);
+                        if (game != null) game.join(e.getPlayer());
+                        else e.getPlayer().sendMessage(ChatColor.RED + "Couldn't find game");
+                    }
                 }
             }
         }

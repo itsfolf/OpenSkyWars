@@ -16,7 +16,7 @@ public class SignUpdater {
         Bukkit.getScheduler().runTaskTimerAsynchronously(OpenSkyWars.getInstance(), () -> {
             for (Game game : GameManager.get().getGames()) {
                 for (Location sign : game.arena.signs) {
-                    if (sign.getBlock().getType().equals(Material.SIGN) || sign.getBlock().getType().equals(Material.SIGN_POST) || sign.getBlock().getType().equals(Material.WALL_SIGN)) {
+                    if (sign.getBlock().getType().equals(Material.SIGN_POST) || sign.getBlock().getType().equals(Material.WALL_SIGN)) {
                         Sign block = (Sign) sign.getBlock().getState();
                         block.setLine(0, ChatColor.GREEN + "OpenSkyWars");
                         block.setLine(1, ChatColor.GREEN + game.arena.prettyName);

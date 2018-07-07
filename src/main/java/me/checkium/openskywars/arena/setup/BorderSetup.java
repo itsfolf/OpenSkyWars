@@ -77,6 +77,7 @@ public class BorderSetup implements Listener {
         player.getInventory().clear();
         player.getInventory().setContents(contents);
         player.getInventory().setArmorContents(armorContents);
+        player.updateInventory();
         setups.remove(this);
         player.sendMessage(ChatColor.GREEN + "Processing new arena region, this can take a while...");
         Bukkit.getServer().getScheduler().runTaskAsynchronously(OpenSkyWars.getInstance(), () -> {

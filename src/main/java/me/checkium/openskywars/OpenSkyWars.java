@@ -4,10 +4,11 @@ import me.checkium.openskywars.arena.ArenaManager;
 import me.checkium.openskywars.arena.SignUpdater;
 import me.checkium.openskywars.commands.MainCommand;
 import me.checkium.openskywars.config.ChestsConfig;
+import me.checkium.openskywars.config.MainConfig;
 import me.checkium.openskywars.config.TeamsConfig;
-import me.checkium.openskywars.game.Game;
 import me.checkium.openskywars.game.GameManager;
-import me.checkium.openskywars.listener.SignListener;
+import me.checkium.openskywars.lobby.SignListener;
+import me.checkium.openskywars.lobby.Lobby;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class OpenSkyWars extends JavaPlugin {
@@ -16,8 +17,14 @@ public class OpenSkyWars extends JavaPlugin {
         return getPlugin(OpenSkyWars.class);
     }
 
+    MainConfig mainConfig;
+    Lobby lobby;
+
     @Override
     public void onEnable() {
+        mainConfig = new MainConfig();
+        mainConfig.load();
+        lobby = new Lobby();
         ArenaManager.get().loadArenas();
         GameManager.get().init();
         new TeamsConfig();
@@ -38,5 +45,14 @@ public class OpenSkyWars extends JavaPlugin {
             }
         });
         ArenaManager.get().saveArenas();
+        lobby.close();
+    }
+
+    public MainConfig getMainConfig() {
+        return mainConfig;
+    }
+
+    public Lobby getLobby() {
+        return lobby;
     }
 }

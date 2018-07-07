@@ -43,7 +43,7 @@ public class GameManager {
         return games;
     }
 
-    Game getGame(Player p) {
+    public Game getGame(Player p) {
         return games.stream().filter(game -> game.players.containsKey(p)).findFirst().orElse(null);
     }
 

@@ -74,7 +74,7 @@ public class Skyoconfig {
      * @throws InvalidConfigurationException If there is an error while loading the config.
      */
 
-    public final void load() throws InvalidConfigurationException {
+    public final void load() {
         try {
             final YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
             Class<?> clazz = getClass();
@@ -86,7 +86,7 @@ public class Skyoconfig {
             }
             saveConfig(config);
         } catch (final Exception ex) {
-            throw new InvalidConfigurationException(ex);
+            ex.printStackTrace();
         }
     }
 

@@ -1,0 +1,5 @@
+prefix: "&7[&2OpenSkyWars&7]"
+
+lobby:
+  enabled: true
+  bungeecord: false

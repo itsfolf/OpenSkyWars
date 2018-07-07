@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+/**
+ * @author InstanceLabs, Checkium
+ */
 public class ResetBlock implements Serializable {
 
     private int x, y, z;

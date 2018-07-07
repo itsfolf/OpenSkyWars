@@ -94,7 +94,6 @@ public class WorldUtils {
 
     private static List<Integer> randomLoc = new ArrayList<>();
     private static List<Integer> randomDLoc = new ArrayList<>();
-
     static {
         for (int i = 0; i < 27; i++) {
             randomLoc.add(i);
@@ -103,6 +102,9 @@ public class WorldUtils {
             randomDLoc.add(i);
         }
     }
+    /**
+     * @author walrusone, Checkium
+     */
     public static void fillChest(Object chest, HashMap<ItemStack, Integer> fill) {
         Inventory inventory = null;
         if (chest instanceof Chest) {

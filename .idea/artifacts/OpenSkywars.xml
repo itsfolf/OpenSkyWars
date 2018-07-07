@@ -8,6 +8,7 @@
       <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/teams.yml" />
       <element id="directory" name="chests">
         <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/chests/basic.yml" />
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/chests/op.yml" />
       </element>
     </root>
   </artifact>

@@ -1,6 +1,7 @@
 package me.checkium.openskywars.game;
 
 import me.checkium.openskywars.OpenSkyWars;
+import me.checkium.openskywars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,7 +19,10 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 
@@ -57,7 +61,12 @@ public class GameListener implements Listener {
             String message = e.getDeathMessage();
             e.setDeathMessage(null);
             game.players.forEach((player, s) -> player.sendMessage(message));
-            p.spigot().respawn();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    p.spigot().respawn();
+                }
+            }.runTaskLater(OpenSkyWars.getInstance(), 5L);
             game.removePlayer(p, true);
             game.checkWin();
         }
@@ -68,6 +77,39 @@ public class GameListener implements Listener {
     public void playerDamageBy(EntityDamageByEntityEvent e) {
         if (game.players.containsKey(e.getEntity()) && game.players.containsKey(e.getDamager())) {
             assisters.get(e.getEntity()).put((Player) e.getDamager(), System.currentTimeMillis());
+        }
+    }
+
+    @EventHandler
+    public void move(PlayerMoveEvent e) {
+        if (game.players.containsKey(e.getPlayer())) {
+            if (e.getTo().getY() < 0) {
+               e.getPlayer().setHealth(0.0D);
+            }
+            if (e.getTo().getX() > game.arena.cuboid.x2 || e.getTo().getX() < game.arena.cuboid.x1) {
+                e.setFrom(e.getTo());
+            }
+        }
+    }
+
+    @EventHandler
+    public void leave(PlayerQuitEvent e) {
+        if (game.players.containsKey(e.getPlayer())) {
+            game.removePlayer(e.getPlayer(), true);
+            game.checkWin();
+        }
+    }
+
+    @EventHandler
+    public void interact(PlayerInteractEvent e) {
+        if (game.players.containsKey(e.getPlayer())) {
+            if (e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+                if (e.getPlayer().getItemInHand().getType().equals(Material.REDSTONE)) {
+                    if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains("Exit")) {
+                       game.removePlayer(e.getPlayer(), true);
+                    }
+                }
+            }
         }
     }
 

@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * @author InstanceLabs, Checkium
+ */
 public class GameReset implements Runnable {
 
     HashMap<Location, ResetBlock> changed = new HashMap<>();

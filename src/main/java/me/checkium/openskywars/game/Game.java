@@ -5,6 +5,7 @@ import me.checkium.openskywars.arena.Arena;
 import me.checkium.openskywars.config.ChestsConfig;
 import me.checkium.openskywars.config.TeamsConfig;
 import me.checkium.openskywars.game.regen.GameReset;
+import me.checkium.openskywars.utils.ItemUtils;
 import me.checkium.openskywars.utils.WorldUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -70,6 +71,7 @@ public class Game {
         invArmorContents.put(p, p.getInventory().getArmorContents());
         p.getInventory().clear();
         p.teleport(arena.lobby);
+        p.getInventory().setItem(8, ItemUtils.named(Material.REDSTONE, 1, ChatColor.GREEN + "Exit"));
         listener.init(p);
         board.add(p);
         if (players.size() >= (arena.minTeams * arena.teamSize)) {
@@ -114,7 +116,9 @@ public class Game {
 
     public void populateChests() {
         arena.chests.forEach((location, s) -> {
-           WorldUtils.fillChest(location.getBlock().getState(), ChestsConfig.getItems().get("basic"));
+            HashMap<ItemStack, Integer> items = ChestsConfig.getItems().get(s);
+            if (items == null) items = new ArrayList<>(ChestsConfig.getItems().values()).get(0);
+           WorldUtils.fillChest(location.getBlock().getState(), items);
         });
     }
 
@@ -169,18 +173,20 @@ public class Game {
     }
 
     public void checkWin() {
-        final boolean[] win = {true};
-        final String[] team = {null};
-        players.forEach((player, s) -> {
-            if (team[0] != null && !team[0].equals(s)) {
-                win[0] = false;
+        if (state.equals(GameState.INGAME)) {
+            final boolean[] win = {true};
+            final String[] team = {null};
+            players.forEach((player, s) -> {
+                if (team[0] != null && !team[0].equals(s)) {
+                    win[0] = false;
+                }
+                team[0] = s;
+            });
+            if (win[0]) {
+                if (endGameTask != null) endGameTask.cancel();
+                players.forEach((player, s) -> player.sendMessage(ChatColor.GREEN + "Team " + TeamsConfig.getTeams().get(s) + ChatColor.GREEN + " won the game!"));
+                resetGame(true);
             }
-            team[0] = s;
-        });
-        if (win[0]) {
-            if (endGameTask != null) endGameTask.cancel();
-            players.forEach((player, s) -> player.sendMessage(ChatColor.GREEN + "Team " + TeamsConfig.getTeams().get(s) + ChatColor.GREEN + " won the game!"));
-            resetGame(true);
         }
     }
 
@@ -203,6 +209,11 @@ public class Game {
             File file = new File(OpenSkyWars.getInstance().getDataFolder() + "/cache");
             if (!file.exists()) file.mkdirs();
             reset.saveBlocksToFile(new File(file, arena.name + "_cache"));
+        }
+        started = false;
+        if (now) {
+            listener = new GameListener(this);
+            board = new GameScoreboard(this);
         }
     }
 
